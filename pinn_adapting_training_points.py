@@ -145,7 +145,6 @@ ax.legend()
 error = y-exact_y
 fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), error.cpu().detach().numpy())
-ax.scatter(n_x.cpu().detach().numpy(), error.cpu().detach().numpy())
 ax.set_title("Error: NN_u - exact_solution")
 
 # Draw the convergence plot
