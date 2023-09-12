@@ -23,7 +23,7 @@ def get_new_adapted_points(
                         zip(x[:-1], x[1:]),
                     )
                 )
-            ),
+            ).to(x.device),
             x[1:-1],
         )
     ).unique()
