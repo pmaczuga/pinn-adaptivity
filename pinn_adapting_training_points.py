@@ -122,6 +122,7 @@ y = f(nn_approximator, x)
 fig, ax = plt.subplots()
 ax.set_title(f"Points distribution final iteration {i}")
 ax.scatter(x.cpu().detach().numpy(), y.cpu().detach().numpy(), s=1)
+fig.savefig(f"results/last_iter")
 
 # Plot the solution in a "dense" mesh
 n_x = torch.linspace(X_INI, X_FIN, steps=1000 + 2, requires_grad=True, device=DEVICE)[
@@ -134,26 +135,31 @@ fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), y.cpu().detach().numpy())
 ax.scatter(n_x.cpu().detach().numpy(), y.cpu().detach().numpy(), s=1)
 ax.set_title("PINN solution")
+fig.savefig(f"results/pinn_solution")
 
 exact_y = exact_solution(n_x, EPSILON)
 fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), exact_y.cpu().detach().numpy())
 ax.set_title("Exact solution")
+fig.savefig(f"results/exact_solution")
 
 # PINN and exact solutions on one plot
 fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), exact_y.cpu().detach().numpy(), label="Exact")
 ax.plot(n_x.cpu().detach().numpy(), y.cpu().detach().numpy(), label="PINN")
 ax.legend()
+fig.savefig(f"results/solutions")
 
 error = y - exact_y
 fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), error.cpu().detach().numpy())
 ax.set_title("Error: NN_u - exact_solution")
+fig.savefig(f"results/error")
 
 # Draw the convergence plot
 fig, ax = plt.subplots()
 ax.semilogy(convergence_data.cpu().detach().numpy())
 ax.set_title("Convergence")
+fig.savefig(f"results/convergence")
 
 plt.show()

@@ -30,4 +30,4 @@ def get_latin_hypercube(xini, xfin, order):
 
 
 def get_id_points(xini, xfin, order):
-    return torch.tensor([xini, xfin])
+    return torch.tensor([xini, xfin], device=xini.device)
