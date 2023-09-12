@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import torch
 import numpy as np
+import torch
 
 from .pinn_core import PINN, dfdx, f
 
+
 def exact_solution(x, eps):
-    return 2*(1-torch.exp((x-1)/eps))/(1-np.exp(-2/eps)) + x -1
+    return 2 * (1 - torch.exp((x - 1) / eps)) / (1 - np.exp(-2 / eps)) + x - 1
 
 
 def f_inter_loss(x, nn_approximator, epsilon):
@@ -15,7 +16,6 @@ def f_inter_loss(x, nn_approximator, epsilon):
         + dfdx(nn_approximator, x, order=1)
         - 1.0
     )
-
 
 
 def compute_loss(

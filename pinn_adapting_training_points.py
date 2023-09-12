@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import sys
 import os
+import sys
 from functools import partial
 
 import matplotlib.pyplot as plt
@@ -9,7 +9,11 @@ import torch
 from matplotlib import rc
 
 from src.adaptation import get_new_adapted_points
-from src.advection_dominated_loss_function import compute_loss, exact_solution, f_inter_loss
+from src.advection_dominated_loss_function import (
+    compute_loss,
+    exact_solution,
+    f_inter_loss,
+)
 from src.mesh_1D import get_mesh
 from src.pinn_core import PINN, f, train_model
 
@@ -43,7 +47,7 @@ x, _ = get_mesh(x, X_INI, X_FIN)
 
 nn_approximator = PINN(3, 15, pinning=False).to(DEVICE)
 
-last_loss_values = torch.tensor(TOL*10).repeat(3).cpu()
+last_loss_values = torch.tensor(TOL * 10).repeat(3).cpu()
 
 interior_loss_fn = partial(
     f_inter_loss, nn_approximator=nn_approximator, epsilon=EPSILON
@@ -128,7 +132,7 @@ n_x, _ = get_mesh(n_x, X_INI, X_FIN)
 y = f(nn_approximator, n_x)
 fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), y.cpu().detach().numpy())
-ax.scatter(n_x.cpu().detach().numpy(), y.cpu().detach().numpy(), s = 1)
+ax.scatter(n_x.cpu().detach().numpy(), y.cpu().detach().numpy(), s=1)
 ax.set_title("PINN solution")
 
 exact_y = exact_solution(n_x, EPSILON)
@@ -142,7 +146,7 @@ ax.plot(n_x.cpu().detach().numpy(), exact_y.cpu().detach().numpy(), label="Exact
 ax.plot(n_x.cpu().detach().numpy(), y.cpu().detach().numpy(), label="PINN")
 ax.legend()
 
-error = y-exact_y
+error = y - exact_y
 fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), error.cpu().detach().numpy())
 ax.set_title("Error: NN_u - exact_solution")
