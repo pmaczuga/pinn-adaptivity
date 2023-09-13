@@ -28,9 +28,9 @@ X_INI = -1.0
 LENGTH = 2.0
 X_FIN = X_INI + LENGTH
 
-NUM_POINTS = 200
+NUM_POINTS = 20000
 
-EPSILON = 0.5  # <-HERE W CHANGE THE epsilon (=0.1 is working, =0.01 is not working)
+EPSILON = 0.005  # <-HERE W CHANGE THE epsilon (=0.1 is working, =0.01 is not working)
 
 MAX_ITERS = 1000
 NUMBER_EPOCHS = 200
@@ -58,7 +58,7 @@ number_total_evaluations = 0
 convergence_data = torch.empty(0)
 
 # Keep all the points
-point_data = torch.empty((MAX_ITERS, NUM_POINTS + 2, 2), device=DEVICE)
+point_data = torch.empty((MAX_ITERS, NUM_POINTS + 2, 2))
 
 n_iters = -10
 
@@ -86,18 +86,19 @@ for i in range(MAX_ITERS):
 
     number_total_evaluations = number_total_evaluations + NUMBER_EPOCHS * x.numel()
 
-    y = f(nn_approximator, x)
-    point_data[i, :] = torch.stack((x, y)).transpose(1, 0).reshape(-1, 2)
+    y = f(nn_approximator, x).detach().cpu()
+    plain_x = x.detach().clone().cpu()
+    point_data[i, :] = torch.stack((plain_x, y)).transpose(1, 0).reshape(-1, 2)
 
-    new_x = get_new_adapted_points(interior_loss_fn, x.reshape(-1), NUM_POINTS)
-    x = torch.cat(
-        (
-            x[0],
-            new_x,
-            x[-1],
-        )
-    ).reshape(-1, 1)
-    x = x.detach().clone().requires_grad_(True)
+    # new_x = get_new_adapted_points(interior_loss_fn, x.reshape(-1), NUM_POINTS)
+    # x = torch.cat(
+    #     (
+    #         x[0],
+    #         new_x,
+    #         x[-1],
+    #     )
+    # ).reshape(-1, 1)
+    # x = x.detach().clone().requires_grad_(True)
 
 
 if n_iters == -10:
