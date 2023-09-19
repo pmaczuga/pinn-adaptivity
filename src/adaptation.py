@@ -4,8 +4,8 @@ from typing import Callable
 
 import torch
 
-from .gaussian_quadrature_1D import get_gaussian_points_physical_space
-from .random_points import get_id_points
+from src.gaussian_quadrature_1D import get_gaussian_points_physical_space
+from src.random_points import get_id_points
 
 Function = Callable[[torch.Tensor], torch.Tensor]
 
@@ -19,7 +19,7 @@ def get_new_adapted_points(
             torch.cat(
                 tuple(
                     map(
-                        lambda gp: get_id_points(gp[0], gp[1], 7).reshape(-1),
+                        lambda gp: get_gaussian_points_physical_space(gp[0], gp[1], 7).reshape(-1),
                         zip(x[:-1], x[1:]),
                     )
                 )
