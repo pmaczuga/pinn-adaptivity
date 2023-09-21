@@ -9,7 +9,7 @@ X_INI = -1.0
 LENGTH = 2.0
 X_FIN = X_INI + LENGTH
 
-NUM_POINTS = 100
+NUM_POINTS = 1000
 
 EPSILON = 0.05  # <-HERE W CHANGE THE epsilon (=0.1 is working, =0.01 is not working)
 

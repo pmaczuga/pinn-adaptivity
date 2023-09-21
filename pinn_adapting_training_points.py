@@ -5,6 +5,7 @@ import sys
 from functools import partial
 
 import torch
+import time
 
 from params import *
 from src.adaptation import get_new_adapted_points
@@ -40,6 +41,7 @@ point_data = torch.empty((MAX_ITERS, NUM_POINTS + 2, 2))
 
 n_iters = -10
 
+start_time = time.time()
 for i in range(MAX_ITERS):
     if last_loss_values.mean() < TOL:
         n_iters = i
@@ -77,7 +79,8 @@ for i in range(MAX_ITERS):
         )
     ).reshape(-1, 1)
     x = x.detach().clone().requires_grad_(True)
-
+end_time = time.time()
+exec_time = end_time - start_time
 
 if n_iters == -10:
     sys.exit(f"The error tolerance has not been reached in {MAX_ITERS} iterations")
@@ -98,3 +101,4 @@ torch.save(nn_approximator, "results/data/pinn.pt")
 torch.save(convergence_data.detach(), "results/data/convergence_data.pt")
 torch.save(n_iters, "results/data/n_iters.pt")
 torch.save(point_data, "results/data/point_data.pt")
+torch.save(exec_time, "results/data/exec_time.pt")

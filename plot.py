@@ -23,6 +23,7 @@ nn_approximator = torch.load("results/data/pinn.pt")
 convergence_data = torch.load("results/data/convergence_data.pt")
 point_data = torch.load("results/data/point_data.pt")
 n_iters = torch.load("results/data/n_iters.pt")
+exec_time = torch.load("results/data/exec_time.pt")
 
 x = torch.linspace(
     X_INI, X_FIN, steps=NUM_POINTS + 2, requires_grad=True, device=DEVICE
@@ -54,13 +55,13 @@ y = f(nn_approximator, n_x)
 fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), y.cpu().detach().numpy())
 ax.scatter(n_x.cpu().detach().numpy(), y.cpu().detach().numpy(), s=1)
-ax.set_title("PINN solution")
+ax.set_title(f"PINN solution, eps={EPSILON}")
 fig.savefig(f"results/pinn_solution")
 
 exact_y = exact_solution(n_x, EPSILON)
 fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), exact_y.cpu().detach().numpy())
-ax.set_title("Exact solution")
+ax.set_title(f"Exact solution, eps={EPSILON}")
 fig.savefig(f"results/exact_solution")
 
 # PINN and exact solutions on one plot
@@ -68,18 +69,19 @@ fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), exact_y.cpu().detach().numpy(), label="Exact")
 ax.plot(n_x.cpu().detach().numpy(), y.cpu().detach().numpy(), "--", label="PINN")
 ax.legend()
+ax.set_title(f"PINN and exact, , eps={EPSILON}")
 fig.savefig(f"results/solutions")
 
 error = y - exact_y
 fig, ax = plt.subplots()
 ax.plot(n_x.cpu().detach().numpy(), error.cpu().detach().numpy())
-ax.set_title("Error: NN_u - exact_solution")
+ax.set_title(f"Error: NN_u - exact_solution, eps={EPSILON}")
 fig.savefig(f"results/error")
 
 # Draw the convergence plot
 fig, ax = plt.subplots()
 ax.semilogy(convergence_data.cpu().detach().numpy())
-ax.set_title("Convergence")
+ax.set_title(f"Convergence, time = {exec_time} s")
 fig.savefig(f"results/convergence")
 
 plt.show()
