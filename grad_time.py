@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 import time
 
-from src.pinn_core import *
+from src.adaptation import *
+import matplotlib.pyplot as plt
+import torch
 
-x = torch.linspace(0, 1, 10, requires_grad=True)
+x = torch.linspace(0, 1, 10)
+loss = lambda x: torch.exp(-(x*6.0 - 3.0)**2)
 
-start = time.time()
+start_time = time.time()
+new_x = refine(x, loss, 100, 0.5)
+end_time = time.time()
+print(f" Refinement took {end_time - start_time} seconds")
 
-for _ in range(20):
-    y = torch.exp(x * 2 - 1) * x + torch.sin(x) * torch.cos(x * x)
-    der = df(y, x)
-
-end = time.time()
-
-print(end - start)
+plt.scatter(new_x.detach(), loss(new_x.detach()), s=1)
+plt.show()

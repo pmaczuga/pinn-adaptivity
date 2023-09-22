@@ -31,12 +31,12 @@ def compute_loss(
 
     # u(1)=0
     boundary_xi = x[-1].reshape(-1, 1)  # last point = 1
-    assert (boundary_xi == 1).all().item()
+    assert (boundary_xi == 1).all().item(), f"{boundary_xi}"
     boundary_loss_right = f(nn_approximator, boundary_xi)
 
     # u(-1)=0
     boundary_xf = x[0].reshape(-1, 1)  # first point = 0
-    assert (boundary_xf == -1).all().item()
+    assert (boundary_xf == -1).all().item(), f"{boundary_xf}"
     boundary_loss_left = f(nn_approximator, boundary_xf)
 
     # obtain the final MSE loss by averaging each loss term and summing them up

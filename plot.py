@@ -25,25 +25,13 @@ point_data = torch.load("results/data/point_data.pt")
 n_iters = torch.load("results/data/n_iters.pt")
 exec_time = torch.load("results/data/exec_time.pt")
 
-x = torch.linspace(
-    X_INI, X_FIN, steps=NUM_POINTS + 2, requires_grad=True, device=DEVICE
-)[1:-1]
-x, _ = get_mesh(x, X_INI, X_FIN)
-
-for i, p in enumerate(point_data[:n_iters, :]):
+for i, p in enumerate(point_data):
     fig, ax = plt.subplots()
     ax.scatter(*(p.transpose(0, 1).cpu().detach().numpy()), s=1)
     ax.set_title(f"Points distribution iteration {i}")
     fig.savefig(f"results/iterations/iter_{i}")
     plt.close(fig)
 
-
-# Plot the last position of the nodes
-y = f(nn_approximator, x)
-fig, ax = plt.subplots()
-ax.set_title(f"Points distribution final iteration {i}")
-ax.scatter(x.cpu().detach().numpy(), y.cpu().detach().numpy(), s=1)
-fig.savefig(f"results/last_iter")
 
 # Plot the solution in a "dense" mesh
 n_x = torch.linspace(X_INI, X_FIN, steps=1000 + 2, requires_grad=True, device=DEVICE)[
