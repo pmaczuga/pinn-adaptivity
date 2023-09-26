@@ -67,4 +67,4 @@ def refine(base_x: torch.Tensor, loss_fun: Callable, num_max_points: int, tol: f
                 new_points.append((x1 + x2) / 2.0)
         x = torch.cat((x, torch.tensor(new_points, device=x.device))).sort()[0]
         n_points = x.numel()
-    return x.reshape(-1, 1)
+    return x.reshape(-1, 1).detach().clone().requires_grad_(True)

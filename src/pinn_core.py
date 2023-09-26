@@ -75,8 +75,10 @@ def train_model(
     device,
     learning_rate: float = 0.01,
     max_epochs: int = 1_000,
+    optimizer = None
 ) -> torch.Tensor:
-    optimizer = torch.optim.Adam(nn_approximator.parameters(), lr=learning_rate)
+    if optimizer == None:
+        optimizer = torch.optim.Adam(nn_approximator.parameters(), lr=learning_rate)
 
     convergence_data = torch.empty((max_epochs), device=device)
 

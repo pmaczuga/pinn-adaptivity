@@ -32,6 +32,8 @@ point_data = []
 
 n_iters = -1
 
+optimizer = torch.optim.Adamax(pinn.parameters(), lr=LEARNING_RATE)
+
 start_time = time.time()
 for i in range(MAX_ITERS):
     print(i)
@@ -41,7 +43,7 @@ for i in range(MAX_ITERS):
 
     # TRAIN PINN
     stage_convergence_data = train_model(
-        pinn, loss_fn, DEVICE, learning_rate=LEARNING_RATE, max_epochs=NUMBER_EPOCHS
+        pinn, loss_fn, DEVICE, learning_rate=LEARNING_RATE, max_epochs=NUMBER_EPOCHS, optimizer=optimizer
     )
 
     convergence_data = torch.cat((convergence_data, stage_convergence_data.cpu()))
@@ -54,6 +56,8 @@ for i in range(MAX_ITERS):
     x = refine(base_x, loss_fn, NUM_MAX_POINTS, TOL).to(DEVICE).requires_grad_(True)
     if x.numel() == NUM_BASE_POINTS:
         break
+    # if convergence_data[-1] < TOL:
+    #     break
 
 end_time = time.time()
 exec_time = end_time - start_time
