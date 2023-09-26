@@ -62,8 +62,9 @@ for i in range(MAX_ITERS):
 end_time = time.time()
 exec_time = end_time - start_time
 
-if n_iters == -10:
-    sys.exit(f"The error tolerance has not been reached in {MAX_ITERS} iterations")
+if n_iters == -1:
+    print(f"[WARNING] The error tolerance has not been reached in {MAX_ITERS} iterations")
+    # sys.exit(f"The error tolerance has not been reached in {MAX_ITERS} iterations")
 
 # Create result directory if it doesn't exist
 try:
