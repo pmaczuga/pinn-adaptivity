@@ -2,35 +2,27 @@
 
 import os
 import sys
+import time
 from functools import partial
 
 import torch
-import time
 
 from params import *
 from src.adaptation import get_new_adapted_points, refine
-from src.advection_dominated_loss_function import (
-    compute_loss,
-    f_inter_loss,
-)
+from src.advection_dominated_loss_function import compute_loss, f_inter_loss
 from src.mesh_1D import get_mesh
 from src.pinn_core import PINN, f, train_model
-
 
 # THE FIRST SET OF TRAINING POINTS IS AN EQUIDISTRIBUTED SET OF POINTS
 x = torch.linspace(
     X_INI, X_FIN, steps=NUM_MAX_POINTS, requires_grad=True, device=DEVICE
 ).reshape(-1, 1)
-base_x = torch.linspace(
-    X_INI, X_FIN, steps=NUM_BASE_POINTS
-)
+base_x = torch.linspace(X_INI, X_FIN, steps=NUM_BASE_POINTS, device=DEVICE)
 
 
 pinn = PINN(LAYERS, NEURONS, pinning=False).to(DEVICE)
 
-interior_loss_fn = partial(
-    f_inter_loss, nn_approximator=pinn, epsilon=EPSILON
-)
+interior_loss_fn = partial(f_inter_loss, nn_approximator=pinn, epsilon=EPSILON)
 
 
 convergence_data = torch.empty(0)
@@ -56,7 +48,7 @@ for i in range(MAX_ITERS):
 
     y = f(pinn, x).detach().cpu()
     plain_x = x.detach().clone().cpu()
-    point_data.append( torch.stack((plain_x, y)).transpose(1, 0).reshape(-1, 2) )
+    point_data.append(torch.stack((plain_x, y)).transpose(1, 0).reshape(-1, 2))
 
     loss_fn = partial(f_inter_loss, epsilon=EPSILON, nn_approximator=pinn)
     x = refine(base_x, loss_fn, NUM_MAX_POINTS, TOL).to(DEVICE).requires_grad_(True)
