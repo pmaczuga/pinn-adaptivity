@@ -68,3 +68,24 @@ def refine(base_x: torch.Tensor, loss_fun: Callable, num_max_points: int, tol: f
         x = torch.cat((x, torch.tensor(new_points, device=x.device))).sort()[0]
         n_points = x.numel()
     return x.reshape(-1, 1).detach().clone().requires_grad_(True)
+
+def exit_criterion_no_adaptation(base_x: torch.Tensor, loss_fun: Callable, tol: float):
+    def loss_np(x):
+        return loss_fun(x=np_to_torch(x)).reshape(-1)
+
+    x = base_x.detach().clone().requires_grad_(True)
+
+    for x1, x2 in zip(x[:-1], x[1:]):
+        int_x = (
+            torch.linspace(x1.item(), x2.item(), 20)
+            .requires_grad_(True)
+            .reshape(-1, 1)
+            .to(x.device)
+        )
+        int_y = loss_fun(x=int_x) ** 2
+        el_loss = torch.trapezoid(int_y, int_x, dim=0) / (x2 - x1)
+        # el_loss = quad(loss_np, x1.item(), x2.item())[0] / (x2 - x1)
+        if el_loss > tol:
+            return False
+
+    return True

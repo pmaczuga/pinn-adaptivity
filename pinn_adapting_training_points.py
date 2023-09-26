@@ -8,7 +8,7 @@ from functools import partial
 import torch
 
 from params import *
-from src.adaptation import get_new_adapted_points, refine
+from src.adaptation import exit_criterion_no_adaptation, get_new_adapted_points, refine
 from src.advection_dominated_loss_function import compute_loss, f_inter_loss
 from src.mesh_1D import get_mesh
 from src.pinn_core import PINN, f, train_model
@@ -36,6 +36,7 @@ optimizer = torch.optim.Adamax(pinn.parameters(), lr=LEARNING_RATE)
 
 start_time = time.time()
 for i in range(MAX_ITERS):
+    n_iters = i
     print(i)
 
     # UPDATE THE TRAINING POINTS FOR PINN
@@ -53,16 +54,18 @@ for i in range(MAX_ITERS):
     point_data.append(torch.stack((plain_x, y)).transpose(1, 0).reshape(-1, 2))
 
     loss_fn = partial(f_inter_loss, epsilon=EPSILON, nn_approximator=pinn)
-    x = refine(base_x, loss_fn, NUM_MAX_POINTS, TOL).to(DEVICE).requires_grad_(True)
-    if x.numel() == NUM_BASE_POINTS:
-        break
-    # if convergence_data[-1] < TOL:
-    #     break
+    if ADAPTATION:
+        x = refine(base_x, loss_fn, NUM_MAX_POINTS, TOL).to(DEVICE).requires_grad_(True)
+        if x.numel() == NUM_BASE_POINTS:
+            break
+    else: 
+        if exit_criterion_no_adaptation(base_x, loss_fn, TOL):
+            break
 
 end_time = time.time()
 exec_time = end_time - start_time
 
-if n_iters == -1:
+if n_iters == MAX_ITERS - 1:
     print(f"[WARNING] The error tolerance has not been reached in {MAX_ITERS} iterations")
     # sys.exit(f"The error tolerance has not been reached in {MAX_ITERS} iterations")
 

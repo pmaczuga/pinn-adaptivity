@@ -39,6 +39,7 @@ with open("results/result.txt", "w") as file:
     file.write(f"LEARNING_RATE = {LEARNING_RATE}\n")
     file.write(f"LAYERS = {LAYERS}\n")
     file.write(f"NEURONS = {NEURONS}\n")
+    file.write(f"ADAPTATION = {ADAPTATION}\n")
     file.write(f"TOL = {TOL}")
     file.write(f"\n")
     file.write(f"Time = {exec_time}\n")
