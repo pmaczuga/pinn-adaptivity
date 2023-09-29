@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from enum import Enum
 from typing import Callable
 
 import torch
@@ -9,6 +10,11 @@ from src.gaussian_quadrature_1D import get_gaussian_points_physical_space
 from src.random_points import get_id_points
 
 Function = Callable[[torch.Tensor], torch.Tensor]
+
+NO_ADAPTATION = "no-adaptation"
+MIDDLE_POINT = "middle-point"
+GAUSS = "gauss"
+RANDOM = "random"
 
 
 def get_new_adapted_points(

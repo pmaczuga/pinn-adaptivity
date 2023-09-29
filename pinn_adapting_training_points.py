@@ -54,13 +54,21 @@ for i in range(MAX_ITERS):
     point_data.append(torch.stack((plain_x, y)).transpose(1, 0).reshape(-1, 2))
 
     loss_fn = partial(f_inter_loss, epsilon=EPSILON, nn_approximator=pinn)
-    if ADAPTATION:
+    if ADAPTATION == MIDDLE_POINT:
         x = refine(base_x, loss_fn, NUM_MAX_POINTS, TOL).to(DEVICE).requires_grad_(True)
-        if x.numel() == NUM_BASE_POINTS:
-            break
-    else: 
-        if exit_criterion_no_adaptation(base_x, loss_fn, TOL):
-            break
+    if ADAPTATION == GAUSS:
+        new_x = get_new_adapted_points(loss_fn, x.reshape(-1), NUM_MAX_POINTS)
+        x = torch.cat(
+            (
+                x[0],
+                new_x,
+                x[-1],
+            )
+        ).reshape(-1, 1).detach().clone().requires_grad_(True)
+
+    if exit_criterion_no_adaptation(base_x, loss_fn, TOL):
+        break
+
 
 end_time = time.time()
 exec_time = end_time - start_time

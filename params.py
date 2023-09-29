@@ -1,6 +1,7 @@
 import torch
 
 from params import *
+from src.adaptation import NO_ADAPTATION, MIDDLE_POINT, GAUSS, RANDOM
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(DEVICE)
@@ -19,7 +20,8 @@ LAYERS = 3
 NEURONS = 15
 LEARNING_RATE = 0.005
 
-ADAPTATION = False
+# NO_ADAPTATION, MIDDLE_POINT, GAUSS, RANDOM
+ADAPTATION = MIDDLE_POINT
 
 # Tolerance
 TOL = 1e-4
